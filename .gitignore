@@ -14,3 +14,4 @@ scraper/.env
 # build
 dist/
 scraper/dist/
+.vercel
