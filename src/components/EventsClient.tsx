@@ -85,7 +85,6 @@ export default function EventsClient({ events }: { events: Event[] }) {
 
   const filtered = useMemo(() => {
     let list = events.filter(e => {
-      if (e.status === 'rejected') return false
       if (filters.source !== 'all' && e.source_platform?.toLowerCase() !== filters.source.toLowerCase()) return false
       if (filters.city !== 'all' && e.city !== filters.city) return false
       if (filters.type !== 'all' && e.event_type !== filters.type) return false
@@ -130,7 +129,7 @@ export default function EventsClient({ events }: { events: Event[] }) {
     return tags
   }, [filters])
 
-  const total = events.filter(e => e.status !== 'rejected').length
+  const total = events.length
   const uniqueCities = useMemo(() => new Set(filtered.map(e => e.city).filter(Boolean)).size, [filtered])
   const uniqueSources = useMemo(() => new Set(filtered.map(e => e.source_platform).filter(Boolean)).size, [filtered])
 
@@ -245,6 +244,7 @@ export default function EventsClient({ events }: { events: Event[] }) {
             <button className={`src-pill src-pill-me${filters.source==='Meetup'?' on':''}`} onClick={() => setFilter('source','Meetup')}>
               <Image src="/logo-meetup.png" alt="Meetup" width={52} height={20} style={{height:20,width:'auto'}} />
             </button>
+            <button className={`pill${filters.source==='BECI'?' on':''}`} onClick={() => setFilter('source','BECI')}>BECI</button>
           </div>
           <div className="frow">
             <span className="flabel">City</span>
@@ -335,8 +335,6 @@ function EventCard({ event }: { event: Event }) {
           </div>
           <div className="src-row">
             <SourceBadge platform={event.source_platform} />
-            {event.status === 'pending' && <span className="status-dot pending" title="Pending review" />}
-            {event.status === 'approved' && <span className="status-dot approved" title="Approved" />}
           </div>
         </div>
         <div className="ecard-title">{event.title}</div>

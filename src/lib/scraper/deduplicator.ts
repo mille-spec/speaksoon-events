@@ -13,16 +13,16 @@ export async function deduplicateEvents(
 
   const { data: existing, error } = await supabase
     .from('events')
-    .select('title, date, city')
-    .gte('date', minDate)
-    .lte('date', maxDate);
+    .select('event_title, start_date, city')
+    .gte('start_date', minDate)
+    .lte('start_date', maxDate);
 
   if (error) {
     return { newEvents: events, duplicates: [] };
   }
 
   const existingKeys = new Set(
-    (existing || []).map((e) => makeKey(e.title, e.date, e.city))
+    (existing || []).map((e) => makeKey(e.event_title, e.start_date, e.city))
   );
 
   const newEvents: ClassifiedEvent[] = [];

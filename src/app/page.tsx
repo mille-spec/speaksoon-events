@@ -16,18 +16,42 @@ async function getEvents(): Promise<Event[]> {
 
   const supabase = createClient(url, key)
 
+  // Real column names on `events` (event_title/start_date/location_venue/etc) come
+  // from the shared schema with events_staging — there is no `status` column here,
+  // every row in this table is implicitly live.
   const { data, error } = await supabase
     .from('events')
     .select('*')
-    .not('status', 'eq', 'rejected')
-    .order('date', { ascending: true })
+    .order('start_date', { ascending: true })
+    .order('time_start', { ascending: true })
 
   if (error) {
     console.error('Supabase fetch error:', error.message)
     return []
   }
 
-  return (data as Event[]) ?? []
+  return (data ?? []).map((row): Event => ({
+    id: row.id,
+    title: row.event_title,
+    date: row.start_date,
+    time_start: row.time_start,
+    time_end: row.time_end,
+    city: row.city,
+    venue: row.location_venue,
+    organizer: row.organizer,
+    organizer_type: row.organizer_type || null,
+    event_type: row.event_type || null,
+    industry_tags: row.industry_tags
+      ? row.industry_tags.split(',').map((t: string) => t.trim()).filter(Boolean)
+      : [],
+    description: row.description,
+    registration_url: row.registration_url,
+    source_platform: row.source_platform,
+    also_listed_on: row.also_listed_on
+      ? row.also_listed_on.split(',').map((t: string) => t.trim()).filter(Boolean)
+      : null,
+    scraped_at: row.scraped_at,
+  }))
 }
 
 export default async function Home() {

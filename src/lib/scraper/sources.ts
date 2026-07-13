@@ -59,7 +59,7 @@ export const TIER_2_SOURCES: Source[] = [
 
   // Chambers + Federations
   { name: 'BECI Brussels', platform: 'beci', tier: 2,
-    url: 'https://www.beci.be/en/events' },
+    url: 'https://www.beci.be/en/event' },
   { name: 'UNIZO National', platform: 'unizo', tier: 2,
     url: 'https://www.unizo.be/nl/events' },
   { name: 'UNIZO West-Vlaanderen', platform: 'unizo', tier: 2,
