@@ -16,12 +16,13 @@ async function getEvents(): Promise<Event[]> {
 
   const supabase = createClient(url, key)
 
-  // Real column names on `events` (event_title/start_date/location_venue/etc) come
-  // from the shared schema with events_staging — there is no `status` column here,
-  // every row in this table is implicitly live.
+  // Reads events_staging directly — same table the Lovable public site reads,
+  // and the only table the n8n workflow actually writes to. The separate `events`
+  // table (this app's own scraper output) is unused; one shared table, one writer.
   const { data, error } = await supabase
-    .from('events')
+    .from('events_staging')
     .select('*')
+    .neq('status', 'rejected')
     .order('start_date', { ascending: true })
     .order('time_start', { ascending: true })
 
