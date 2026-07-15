@@ -7,16 +7,19 @@ import type { Event } from '@/lib/types'
 const MONTHS_ABB = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
 const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December']
 
-function parseDate(s: string) {
+function parseDate(s: string | null) {
+  if (!s) return null
   const [y, m, d] = s.split('-').map(Number)
   return new Date(y, m - 1, d)
 }
-function dateChip(s: string) {
+function dateChip(s: string | null) {
   const d = parseDate(s)
+  if (!d) return { mon: '', day: '?' }
   return { mon: MONTHS_ABB[d.getMonth()], day: d.getDate() }
 }
-function monthGroup(s: string) {
+function monthGroup(s: string | null) {
   const d = parseDate(s)
+  if (!d) return 'Date TBD'
   return `${MONTHS_FULL[d.getMonth()]} ${d.getFullYear()}`
 }
 function fmtType(t: string | null) {
@@ -102,8 +105,8 @@ export default function EventsClient({ events }: { events: Event[] }) {
       }
       return true
     })
-    if (sort === 'date-asc') list.sort((a,b) => a.date.localeCompare(b.date))
-    else if (sort === 'date-desc') list.sort((a,b) => b.date.localeCompare(a.date))
+    if (sort === 'date-asc') list.sort((a,b) => (a.date||'').localeCompare(b.date||''))
+    else if (sort === 'date-desc') list.sort((a,b) => (b.date||'').localeCompare(a.date||''))
     else if (sort === 'city') list.sort((a,b) => (a.city||'').localeCompare(b.city||''))
     else if (sort === 'az') list.sort((a,b) => (a.title||'').localeCompare(b.title||''))
     return list

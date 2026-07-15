@@ -1,10 +1,10 @@
 export interface Event {
   id: string
   title: string
-  date: string
+  date: string | null
   time_start: string | null
   time_end: string | null
-  city: string
+  city: string | null
   venue: string | null
   organizer: string | null
   organizer_type: 'chamber' | 'federation' | 'community' | 'company' | 'government' | 'startup_ecosystem' | 'unknown' | null
